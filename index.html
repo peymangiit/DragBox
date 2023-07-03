@@ -21,6 +21,7 @@
                 border-radius: 4px; padding: 8px;
                 background-color: red;
                 color: white;
+                cursor: pointer;
             }
         body{
             height: 100vh;
@@ -42,7 +43,7 @@
 
 <body>
     <aside draggable="true" id="dragme" class="dragg">
-    This is a Box, drag me.
+    This is a Box, Copy me.
     </aside>
 
     <div class="showPos">
@@ -53,11 +54,13 @@
 
     <script>
 
+        var num =1;
         const boxx = document.querySelector(".showPos");
         const posxEl = document.querySelector("#Xpos");
         const posyEl = document.querySelector("#Ypos");
         const item = window.
         window.addEventListener("mousedown", (e)=>{
+            // if(e.target==body)
             const selected = e.target
             console.log("target is :"+selected);
             e.target.style.backgroundColor = "blue";
@@ -72,14 +75,14 @@
     });
     window.addEventListener("mouseup", (e)=>{
         console.log("mouseup target : "+e.target)
-        e.target.style.backgroundColor = "red";
+        e.target.style.backgroundColor = "white";
 
     });
         function drag_start(event) {
             var style = window.getComputedStyle(event.target, null);
             event.dataTransfer.setData("text/plain",
-            (parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY));
-            var clBox = event.target;
+            (parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY)+ ','+ event.target.id+','+event.target.classList);
+            
         } 
         function drag_over(event) { 
             event.preventDefault(); 
@@ -93,23 +96,38 @@
         
         function drop(event) { 
             event.preventDefault();
-
+            const dmEl = document.querySelector("#dragme");
             const divEl = document.createElement("div");
             const bodyEl = document.querySelector("body");
             divEl.classList.add("dragg");
+            divEl.id  = "move"+ num++
             divEl.draggable = "true";
-
+            
 
             var offset = event.dataTransfer.getData("text/plain").split(',');
-            console.log(offset)
+            console.log(num);
+            console.log(offset[2])
             console.log(event.clientX)
             console.log(event.clientY)
+            console.log(this);
+            
+            if(offset[2] == "dragme"){
+                divEl.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
+                divEl.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
+                bodyEl.appendChild(divEl);
+            }
+           else {
+            let moveEl = document.querySelector(`#${offset[2]}`)
+                moveEl.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
+                moveEl.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
 
+           }
            
-            divEl.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
-            divEl.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
-            bodyEl.appendChild(divEl);
 
+
+            
+            dmEl.style.backgroundColor = "red"
+          
            let divsBlue = document.querySelectorAll(".dragg");
            divsBlue.forEach(div => {
             div.style.backgroundColor = "red"
