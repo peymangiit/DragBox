@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        aside { 
+                position:  absolute;
+                left: 10px;
+                top: 10px; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
+                width: 200px; 
+                height: 200px;
+                background: rgba(255,255,255,0.66); 
+                border: 2px  solid rgba(0,0,0,0.5); 
+                border-radius: 4px; padding: 8px;
+                background-color: red;
+                color: white;
+            }
+        body{
+            height: 100vh;
+        }
+
+        .showPos{
+            position: absolute;
+            top: 10px;
+            right: 0;
+            width: 200px;
+            height: 150px;
+            background-color: aqua;
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <aside draggable="true" id="dragme">
+    This is a Box, drag me.
+    </aside>
+
+    <div class="showPos">
+        <p id="Xpos"></p>
+        <p id="Ypos"></p>
+     </div>
+
+
+    <script>
+
+        var dm = document.getElementById('dragme'); 
+        dm.addEventListener('dragstart',drag_start,false); 
+        document.body.addEventListener('dragover',drag_over,false); 
+        document.body.addEventListener('drop',drop,false); 
+        const boxx = document.querySelector(".showPos");
+        const posxEl = document.querySelector("#Xpos");
+        const posyEl = document.querySelector("#Ypos");
+        // console.log(boxx)
+        // console.log(posxEl)
+        // console.log(posyEl)
+
+        function drag_start(event) {
+            var style = window.getComputedStyle(event.target, null);
+            event.dataTransfer.setData("text/plain",
+            (parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY));
+            dm.style.backgroundColor = "blue";
+        } 
+        function drag_over(event) { 
+            event.preventDefault(); 
+           
+           posxEl.textContent = `Xposition : ${event.clientX}`
+           posyEl.textContent = `Yposition : ${event.clientY}`
+
+
+            return false; 
+        } 
+        function drop(event) { 
+            var offset = event.dataTransfer.getData("text/plain").split(',');
+            console.log(offset)
+            console.log(event.clientX)
+            console.log(event.clientY)
+            var dm = document.getElementById('dragme');
+            dm.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
+            dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
+            event.preventDefault();
+            dm.style.backgroundColor = "red";
+            return false;
+        } 
+        
+
+    </script>
+</body>
+</html>
